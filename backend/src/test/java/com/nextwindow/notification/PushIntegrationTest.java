@@ -99,6 +99,11 @@ class PushIntegrationTest extends IntegrationTest {
         demo.simulate("headphones", DemoService.Action.PRICE_DROP, null);
         monitoring.checkNow(src);
         Long alertId = jdbc.queryForObject("select id from alert", Long.class);
+        // let the asynchronous post-commit dispatch finish so the steps below are deterministic
+        long deadline = System.currentTimeMillis() + 10_000;
+        while ("PENDING".equals(jdbc.queryForObject("select push_status from alert", String.class)) && System.currentTimeMillis() < deadline) {
+            Thread.sleep(50);
+        }
         push.dispatch(alertId); // synchronously, independent of the async listener
         assertThat(jdbc.queryForObject("select push_status from alert", String.class)).isEqualTo("SENT");
 

@@ -149,19 +149,17 @@ public class PushService {
             switch (d) {
                 case DELIVERED -> {
                     delivered++;
-                    s.setFailureCount(0);
-                    s.setLastSuccessAt(clock.instant());
+                    subscriptions.markDelivered(s.getId(), clock.instant());
                 }
                 case EXPIRED -> {
                     removed++;
-                    subscriptions.delete(s);
+                    subscriptions.deleteQuietly(s.getId());
                 }
                 default -> {
                     failed++;
-                    s.setFailureCount(s.getFailureCount() + 1);
-                    if (s.getFailureCount() >= MAX_FAILURES) {
-                        log.info("Removing push subscription {} after repeated failures", s.getId());
-                        subscriptions.delete(s);
+                    subscriptions.markFailed(s.getId());
+                    if (subscriptions.deleteIfFailedAtLeast(s.getId(), MAX_FAILURES) > 0) {
+                        log.info("Removed push subscription {} after repeated failures", s.getId());
                     }
                 }
             }
