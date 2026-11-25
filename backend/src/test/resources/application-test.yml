@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: ${TEST_DATABASE_URL:jdbc:postgresql://localhost:5432/nextwindow_test}
+    username: ${TEST_DATABASE_USERNAME:nextwindow}
+    password: ${TEST_DATABASE_PASSWORD:nextwindow}
+  flyway:
+    clean-disabled: false
+
+logging:
+  level:
+    com.nextwindow: WARN
+
+nextwindow:
+  monitoring:
+    scheduler-enabled: false
+  fetch:
+    host-min-delay: 0s
+    max-retries: 0
+  demo:
+    enabled: true
+    seed-user: false

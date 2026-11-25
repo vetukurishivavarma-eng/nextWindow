@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: nextwindow
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/nextwindow}
+    username: ${DATABASE_USERNAME:nextwindow}
+    password: ${DATABASE_PASSWORD:nextwindow}
+    hikari:
+      maximum-pool-size: ${DATABASE_POOL_SIZE:10}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+  jackson:
+    default-property-inclusion: always
+    serialization:
+      write-dates-as-timestamps: false
+  mvc:
+    problemdetails:
+      enabled: false
+
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: ${FORWARD_HEADERS_STRATEGY:none}
+  error:
+    include-message: never
+    include-stacktrace: never
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.nextwindow: INFO
+    org.apache.hc: WARN
+
+nextwindow:
+  public-url: ${PUBLIC_URL:http://localhost:5173}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  auth:
+    cookie-secure: ${COOKIE_SECURE:false}
+    session-ttl: ${SESSION_TTL:14d}
+  monitoring:
+    scheduler-enabled: ${MONITORING_SCHEDULER_ENABLED:true}
+    tick-interval: ${MONITORING_TICK_INTERVAL:PT15S}
+    worker-threads: ${MONITORING_WORKER_THREADS:4}
+    default-interval-minutes: ${MONITORING_DEFAULT_INTERVAL_MINUTES:60}
+    min-interval-minutes: ${MONITORING_MIN_INTERVAL_MINUTES:15}
+  fetch:
+    user-agent: ${FETCH_USER_AGENT:NextWindowBot/1.0 (+https://github.com/nextwindow; change monitoring)}
+    host-min-delay: ${FETCH_HOST_MIN_DELAY:10s}
+    respect-robots: true
+  push:
+    vapid-public-key: ${VAPID_PUBLIC_KEY:}
+    vapid-private-key: ${VAPID_PRIVATE_KEY:}
+    subject: ${VAPID_SUBJECT:mailto:admin@example.com}
+  demo:
+    enabled: ${DEMO_ENABLED:false}
+    seed-user: ${DEMO_SEED_USER:false}
