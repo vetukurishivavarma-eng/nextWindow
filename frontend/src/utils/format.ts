@@ -19,7 +19,7 @@ export function relativeTime(iso: string | null | undefined, now: number = Date.
   const diff = Math.round((t - now) / 1000);
   const abs = Math.abs(diff);
   const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
-  if (abs < 45) return diff >= 0 ? 'in a moment' : 'just now';
+  if (abs < 45) return 'just now';
   if (abs < 3600) return rtf.format(Math.round(diff / 60), 'minute');
   if (abs < 86400) return rtf.format(Math.round(diff / 3600), 'hour');
   if (abs < 86400 * 30) return rtf.format(Math.round(diff / 86400), 'day');

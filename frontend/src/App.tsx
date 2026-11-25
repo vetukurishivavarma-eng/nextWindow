@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { useAuth } from './hooks/useAuth';
 import { AppLayout } from './layouts/AppLayout';
 import { PublicLayout } from './layouts/PublicLayout';
@@ -22,10 +22,13 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+/** Redirects visitors who arrive already signed in; a user who signs in on this page is navigated by the form itself. */
 function GuestOnly({ children }: { children: ReactNode }) {
   const { user, ready } = useAuth();
+  const wasGuest = useRef(false);
   if (!ready) return <Loading />;
-  return user ? <Navigate to="/dashboard" replace /> : <>{children}</>;
+  if (!user) wasGuest.current = true;
+  return user && !wasGuest.current ? <Navigate to="/dashboard" replace /> : <>{children}</>;
 }
 
 export function App() {
