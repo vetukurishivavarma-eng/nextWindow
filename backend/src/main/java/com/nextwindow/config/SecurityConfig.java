@@ -45,13 +45,18 @@ public class SecurityConfig {
                 .headers(h -> h
                         .contentTypeOptions(c -> {})
                         .frameOptions(f -> f.deny())
-                        .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)))
+                        .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                        .contentSecurityPolicy(c -> c.policyDirectives("default-src 'self'; img-src 'self' data:; "
+                                + "style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; "
+                                + "frame-ancestors 'none'; base-uri 'self'; form-action 'self'")))
                 .authorizeHttpRequests(a -> a
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login", "/api/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/config").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
+                        // Bundled single-page app (static files + client-side routes) when served by this service
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
                         .anyRequest().denyAll())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> {
