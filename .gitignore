@@ -13,3 +13,4 @@ frontend/coverage/
 *.iml
 .DS_Store
 frontend/*.tsbuildinfo
+demo-output/
